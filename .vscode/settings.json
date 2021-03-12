@@ -1,0 +1,8 @@
+{
+  
+  "vetur.experimental.templateInterpolationService": true,
+  "splitHTMLAttributes.useSpacesForTabs": false,
+  "splitHTMLAttributes.tabSize": 3,
+  "editor.tabSize": 3,
+  "vetur.format.options.tabSize": 3
+}
