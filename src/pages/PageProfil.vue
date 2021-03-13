@@ -64,14 +64,20 @@
 
 <script>
 import firebase from "firebase";
-import { currentUser } from "../mixins/currentUser.js";
 
 export default {
    name: "PageHome",
-   mixins: [currentUser],
    data() {
       return {
          posts: [],
+          profil: {
+            avatar: "",
+            name: "",
+            username: "",
+            bio: "",
+            author: "",
+            mail: ""
+         },
          loadingPosts: false,
          windowWidth: window.innerWidth,
       };
@@ -107,7 +113,28 @@ export default {
                post,
             },
          });
-         
+      },
+      currentUser() {
+         firebase
+            .firestore()
+            .collection("users")
+            .doc(this.$route.query.user)
+            .get()
+            .then((user) => {
+               if (user.exists) {
+                  this.profil.avatar = user.data().avatar;
+                  this.profil.name = user.data().name;
+                  this.profil.username = user.data().username;
+                  this.profil.bio = user.data().bio;
+                  this.profil.author = user.data().author;
+                  this.profil.mail = user.data().mail;
+               } else {
+                  console.log("No such user!");
+               }
+            })
+            .catch((error) => {
+               console.log("Error getting document:", error);
+            });
       },
       editProfil() {
          this.$router.push("/profil/edit");
@@ -120,6 +147,7 @@ export default {
       window.onresize = () => {
          this.windowWidth = window.innerWidth;
       };
+      this.currentUser();
    },
 };
 </script>
