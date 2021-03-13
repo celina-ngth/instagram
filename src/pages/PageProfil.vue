@@ -64,35 +64,31 @@
 
 <script>
 import firebase from "firebase";
+import { currentUser } from "../mixins/currentUser.js";
 
 export default {
    name: "PageHome",
+   mixins: [currentUser],
    data() {
       return {
          posts: [],
-         profil: {
-            avatar: "",
-            name: "",
-            username: "",
-            bio: "",
-            author: "",
-         },
          loadingPosts: false,
          windowWidth: window.innerWidth,
       };
    },
    methods: {
       getPosts() {
-         let user = firebase.auth().currentUser;
          this.loadingPosts = true;
          this.$axios
             .get(`${process.env.API}/profil`, {
                params: {
-                  author: user.uid,
+                  author: this.$route.query.user
                },
             })
             .then((res) => {
-               this.posts = res.data;
+               this.posts = res.data.sort(function (a, b) {
+                  return b["date"] - a["date"];
+               });
                this.loadingPosts = false;
             })
             .catch(() => {
@@ -104,32 +100,17 @@ export default {
             });
       },
       getPost(post) {
-         this.$router.push({ name: "post", params: { id: post.id, post } });
+         this.$router.push({
+            name: "post",
+            params: {
+               id: post.id,
+               post,
+            },
+         });
+         
       },
       editProfil() {
          this.$router.push("/profil/edit");
-      },
-      thisCurrentUser() {
-         let user = firebase.auth().currentUser;
-         firebase
-            .firestore()
-            .collection("users")
-            .doc(user.uid)
-            .get()
-            .then((user) => {
-               if (user.exists) {
-                  this.profil.avatar = user.data().avatar;
-                  this.profil.name = user.data().name;
-                  this.profil.username = user.data().username;
-                  this.profil.bio = user.data().bio;
-                  this.profil.author = user.data().author;
-               } else {
-                  console.log("No such user!");
-               }
-            })
-            .catch((error) => {
-               console.log("Error getting document:", error);
-            });
       },
    },
    created() {
@@ -139,7 +120,6 @@ export default {
       window.onresize = () => {
          this.windowWidth = window.innerWidth;
       };
-      this.thisCurrentUser();
    },
 };
 </script>

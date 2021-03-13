@@ -15,7 +15,7 @@
             <q-separator vertical inset spaced class="large-screen-only" />
 
             <q-toolbar-title class="text-grand-hotel text-bold logo">
-               <router-link to="/">Quasargram</router-link>
+               <router-link to="/">Instagram</router-link>
             </q-toolbar-title>
 
             <q-btn
@@ -97,7 +97,7 @@ export default {
    methods: {
       profil() {
          let user = firebase.auth().currentUser;
-         this.$router.push(`/profil?author=${user.uid}`);
+         this.$router.push(`/profil?user=${user.uid}`);
       },
       logout() {
          firebase

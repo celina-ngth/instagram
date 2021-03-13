@@ -12,8 +12,8 @@
                >
                   <q-item>
                      <q-item-section avatar>
-                        <q-avatar>
-                           <img :src="post.avatar" />
+                        <q-avatar @click="goToProfil(post.author)">
+                           <img :src="post.avatar"/>
                         </q-avatar>
                      </q-item-section>
 
@@ -83,14 +83,14 @@
                <q-item-section avatar>
                   <q-avatar size="48px">
                      <img
-                        src="https://scontent-cdt1-1.cdninstagram.com/v/t51.2885-19/s320x320/70275920_2472214799494506_5756391156107706368_n.jpg?_nc_ht=scontent-cdt1-1.cdninstagram.com&_nc_ohc=YHFYDqEA-k0AX8_KITQ&tp=1&oh=f24ae19251a2dff00108372a949ed48c&oe=6053AE24"
+                        :src="profil.avatar"
                      />
                   </q-avatar>
                </q-item-section>
 
                <q-item-section>
-                  <q-item-label>Celina</q-item-label>
-                  <q-item-label caption>𝕮</q-item-label>
+                  <q-item-label>{{ profil.username }}</q-item-label>
+                  <q-item-label caption>{{ profil.bio }}</q-item-label>
                </q-item-section>
             </q-item>
          </div>
@@ -101,9 +101,12 @@
 <script>
 import firebase from "firebase";
 import { date } from "quasar";
+import { currentUser } from "../mixins/currentUser.js";
+
 
 export default {
    name: "PageHome",
+   mixins: [currentUser],
    data() {
       return {
          posts: [
@@ -116,7 +119,7 @@ export default {
       };
    },
    methods: {
-      thisCurrentUser() {
+      isConnected() {
          var user = firebase.auth().currentUser;
          if (!user) {
             this.$router.push("/authentication");
@@ -139,10 +142,13 @@ export default {
                   this.loadingPosts = false;
                })
                .catch((error) => {
-                  console.log("Error getting documents: ", error);
+                  console.log("Erreur de récupération des documents ", error);
                });
          });
       },
+      goToProfil(author) {
+         this.$router.push(`/profil?user=${author}`)
+      }
    },
    computed: {
       
@@ -162,17 +168,13 @@ export default {
          .catch((error) => {
             console.log(error);
             this.$q.dialog({
-               title: "Error",
-               message: "Could not download posts",
+               title: "Erreur",
+               message: "Les posts n'ont pas pu être chargés",
             });
          });
    },
-   created() {},
-   beforeMount() {},
    mounted() {
-      this.thisCurrentUser();
-   },
-   beforeUpdate() {
+      this.isConnected();
    },
 };
 </script>

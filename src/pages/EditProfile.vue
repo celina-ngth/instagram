@@ -146,46 +146,18 @@
 
 <script>
 import firebase from "firebase";
+import { currentUser } from "../mixins/currentUser.js";
 
 export default {
    name: "EditProfile",
+   mixins: [currentUser],
    data() {
       return {
          tab: "mails",
          splitterModel: 25,
-         profil: {
-            avatar: "",
-            name: "",
-            username: "",
-            mail: "",
-            bio: "",
-         },
       };
    },
    methods: {
-      thisCurrentUser() {
-         let user = firebase.auth().currentUser;
-         firebase
-            .firestore()
-            .collection("users")
-            .doc(user.uid)
-            .get()
-            .then((user) => {
-               if (user.exists) {
-                  console.log("Document data:", user.data());
-                  this.profil.avatar = user.data().avatar;
-                  this.profil.name = user.data().name;
-                  this.profil.username = user.data().username;
-                  this.profil.bio = user.data().bio;
-                  this.profil.mail = user.data().mail;
-               } else {
-                  console.log("No such document!");
-               }
-            })
-            .catch((error) => {
-               console.log("Error getting document:", error);
-            });
-      },
       updateProfile() {
          let user = firebase.auth().currentUser;
          firebase
@@ -202,14 +174,11 @@ export default {
             .then(() => {
             this.$router.push("/profil"),
             this.$q.notify({
-               message: "Your profile has been updated",
+               message: "Votre profil a été mis à jour",
                actions: [{ icon: "eva-close-outline", color: "white" }],
             });
          });
       },
-   },
-   mounted() {
-      this.thisCurrentUser();
    },
 };
 </script>

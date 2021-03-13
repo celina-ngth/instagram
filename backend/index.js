@@ -28,18 +28,20 @@ let bucket = admin.storage().bucket();
 app.get("/profil", (req, res) => {
   let posts = [];
   db.collection('posts')
-  .where('author', '==', req.query.author)
-  .get()
-  .then((querySnapshot) => {
+    .where('author', '==', req.query.author)
+    .get()
+    .then((querySnapshot) => {
       querySnapshot.docs.forEach((document) => {
         posts.push(document.data())
       });
-    res.send(posts)
-  })
-  .catch((error) => {
-    console.log(`Error getting documents: ${error}`);
-  });
+      res.send(posts)
+    })
+    .catch((error) => {
+      console.log(`Error getting documents: ${error}`);
+    });
 })
+
+
 
 
 // End point - get users
@@ -70,14 +72,14 @@ app.get("/posts", (req, res) => {
 // End point - get one post
 app.get("/posts/:id", (req, res) => {
   db.collection("posts")
-	.doc(req.params.id)
-	.get()
-	.then(response => {
-		res.status(200).send(response.data())
-	})
-	.catch(error => {
-		res.status(400).send(error)
-	})
+    .doc(req.params.id)
+    .get()
+    .then(response => {
+      res.status(200).send(response.data())
+    })
+    .catch(error => {
+      res.status(400).send(error)
+    })
 })
 // End point - create post
 app.post("/createPost", (req, res) => {
@@ -85,16 +87,16 @@ app.post("/createPost", (req, res) => {
   let busboy = new Busboy({ headers: req.headers })
   let fields = {};
 
-  busboy.on("file", function(fieldname, file, filename, encoding, mimetype) {
+  busboy.on("file", function (fieldname, file, filename, encoding, mimetype) {
     console.log(
       "File [" +
-        fieldname +
-        "]: filename: " +
-        filename +
-        ", encoding: " +
-        encoding +
-        ", mimetype: " +
-        mimetype
+      fieldname +
+      "]: filename: " +
+      filename +
+      ", encoding: " +
+      encoding +
+      ", mimetype: " +
+      mimetype
     );
     // /tmp/.png
     let filepath = path.join(os.tmpdir(), filename);
@@ -102,7 +104,7 @@ app.post("/createPost", (req, res) => {
     fileData = { filepath, mimetype };
   });
 
-  busboy.on("field", function(
+  busboy.on("field", function (
     fieldname,
     val,
     fieldnameTruncated,
@@ -113,7 +115,7 @@ app.post("/createPost", (req, res) => {
     fields[fieldname] = val;
   });
 
-  busboy.on("finish", function() {
+  busboy.on("finish", function () {
     bucket.upload(
       fileData.filepath,
       {
@@ -155,14 +157,14 @@ app.post("/createPost", (req, res) => {
 // End point - delete a post
 app.delete("/posts/:id", (req, res) => {
   db.collection("posts")
-	.doc(req.params.id)
-	.delete()
-	.then(() => {
-		res.status(200).send(console.log('Post supprimé'))
-	})
-	.catch(error => {
-		res.status(400).send(error)
-	})
+    .doc(req.params.id)
+    .delete()
+    .then(() => {
+      res.status(200).send(console.log('Post supprimé'))
+    })
+    .catch(error => {
+      res.status(400).send(error)
+    })
 })
 
 

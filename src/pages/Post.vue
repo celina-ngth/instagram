@@ -8,14 +8,12 @@
                <q-item>
                   <q-item-section avatar>
                      <q-avatar>
-                        <img
-                           src="https://scontent-cdt1-1.cdninstagram.com/v/t51.2885-19/s320x320/70275920_2472214799494506_5756391156107706368_n.jpg?_nc_ht=scontent-cdt1-1.cdninstagram.com&_nc_ohc=YHFYDqEA-k0AX8_KITQ&tp=1&oh=f24ae19251a2dff00108372a949ed48c&oe=6053AE24"
-                        />
+                        <img :src="profil.avatar" />
                      </q-avatar>
                   </q-item-section>
 
                   <q-item-section>
-                     <q-item-label>Celina</q-item-label>
+                     <q-item-label>{{ profil.username }}</q-item-label>
                      <q-item-label caption>
                         {{ datas.location }}
                      </q-item-label>
@@ -29,13 +27,15 @@
                         dense
                         size="12px"
                      >
-                     <q-menu>
-                        <q-list style="min-width: 100px">
-                           <q-item clickable v-close-popup>
-                              <q-item-section @click="confirm">Supprimer</q-item-section>
-                           </q-item>
-                        </q-list>
-                     </q-menu>
+                        <q-menu>
+                           <q-list style="min-width: 100px">
+                              <q-item clickable v-close-popup>
+                                 <q-item-section @click="confirm"
+                                    >Supprimer</q-item-section
+                                 >
+                              </q-item>
+                           </q-list>
+                        </q-menu>
                      </q-btn>
                   </q-item-section>
                </q-item>
@@ -58,14 +58,12 @@
          <q-item>
             <q-item-section avatar>
                <q-avatar>
-                  <img
-                     src="https://scontent-cdt1-1.cdninstagram.com/v/t51.2885-19/s320x320/70275920_2472214799494506_5756391156107706368_n.jpg?_nc_ht=scontent-cdt1-1.cdninstagram.com&_nc_ohc=YHFYDqEA-k0AX8_KITQ&tp=1&oh=f24ae19251a2dff00108372a949ed48c&oe=6053AE24"
-                  />
+                  <img :src="profil.avatar" />
                </q-avatar>
             </q-item-section>
 
             <q-item-section>
-               <q-item-label>Celina</q-item-label>
+               <q-item-label>{{ profil.username }}</q-item-label>
                <q-item-label caption>
                   {{ datas.location }}
                </q-item-label>
@@ -79,13 +77,15 @@
                   dense
                   size="12px"
                >
-               <q-menu>
-                  <q-list style="min-width: 100px">
-                     <q-item clickable v-close-popup>
-                        <q-item-section @click="confirm">Supprimer</q-item-section>
-                     </q-item>
-                  </q-list>
-               </q-menu>
+                  <q-menu>
+                     <q-list style="min-width: 100px">
+                        <q-item clickable v-close-popup>
+                           <q-item-section @click="confirm"
+                              >Supprimer</q-item-section
+                           >
+                        </q-item>
+                     </q-list>
+                  </q-menu>
                </q-btn>
             </q-item-section>
          </q-item>
@@ -106,9 +106,11 @@
 
 <script>
 import { date } from "quasar";
+import { currentUser } from "../mixins/currentUser.js";
 
 export default {
    name: "Post",
+   mixins: [currentUser],
    props: ["post"],
    data() {
       return {
@@ -121,8 +123,8 @@ export default {
             .delete(`${process.env.API}/posts/${this.$route.params.id}`)
             .then(() => {
                this.$q.notify({
-                  message: "Post deleted.",
-                  actions: [{ label: "Dismiss", color: "white" }],
+                  message: "Le post a été supprimé.",
+                  actions: [{ label: "Fermer", color: "white" }],
                });
                this.$router.push("/profil");
             });
