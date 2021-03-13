@@ -84,8 +84,6 @@ export default {
    methods: {
       getPosts() {
          let user = firebase.auth().currentUser;
-         console.log(user.uid);
-
          this.loadingPosts = true;
          this.$axios
             .get(`${process.env.API}/profil`, {

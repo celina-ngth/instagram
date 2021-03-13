@@ -97,7 +97,6 @@ export default {
    methods: {
       profil() {
          let user = firebase.auth().currentUser;
-         console.log(user.uid);
          this.$router.push(`/profil?author=${user.uid}`);
       },
       logout() {

@@ -24,7 +24,6 @@
                         </q-item-label>
                      </q-item-section>
                   </q-item>
-
                   <q-separator />
 
                   <q-img :src="post.imageUrl" />
@@ -117,63 +116,63 @@ export default {
       };
    },
    methods: {
-      getPosts() {
-         this.loadingPosts = true;
-         this.$axios
-            .get(`${process.env.API}/posts`)
-            .then((res) => {
-               this.posts = res.data;
-               this.loadingPosts = true; //false
-               this.getAuthor(this.posts)
-            })
-            .catch((error) => {
-               console.log(error);
-               this.$q.dialog({
-                  title: "Error",
-                  message: "Could not download posts",
-               });
-               this.loadingPosts = true; // false
-            });
-      },
       thisCurrentUser() {
          var user = firebase.auth().currentUser;
          if (!user) {
             this.$router.push("/authentication");
          }
       },
-      getAuthor(posts) {
-         posts.forEach((post) => {
+      getAuthor() {
+         this.posts.forEach((post) => {
             firebase
                .firestore()
                .collection("users")
                .where("id", "==", post.author)
                .get()
-               .then((querySnapshot) => {
-                  querySnapshot.forEach((doc) => {
-                     post.username = doc.data().username;
+               .then((results) => {
+                  results.forEach((doc) => {
+                     post.username = doc.data().username,
                      post.avatar = doc.data().avatar;
+
                   });
+                  this.$forceUpdate()
+                  this.loadingPosts = false;
                })
                .catch((error) => {
                   console.log("Error getting documents: ", error);
                });
-               this.loadingPosts = false;
          });
       },
+   },
+   computed: {
+      
    },
    filters: {
       niceDate(value) {
          return date.formatDate(value, "D MMMM YYYY h:mm");
       },
    },
-   created() {
-      this.getPosts();
+   beforeCreate() {
+      this.$axios
+         .get(`${process.env.API}/posts`)
+         .then((res) => {
+            this.posts = res.data;
+            this.getAuthor();
+         })
+         .catch((error) => {
+            console.log(error);
+            this.$q.dialog({
+               title: "Error",
+               message: "Could not download posts",
+            });
+         });
    },
-   beforeMount() {
-  
-   },
+   created() {},
+   beforeMount() {},
    mounted() {
       this.thisCurrentUser();
+   },
+   beforeUpdate() {
    },
 };
 </script>

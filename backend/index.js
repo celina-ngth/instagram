@@ -24,17 +24,14 @@ admin.initializeApp({
 const db = admin.firestore();
 let bucket = admin.storage().bucket();
 
-
-
 // End point - GET POSTS BY USER
 app.get("/profil", (req, res) => {
-    let posts = [];
+  let posts = [];
   db.collection('posts')
   .where('author', '==', req.query.author)
   .get()
   .then((querySnapshot) => {
       querySnapshot.docs.forEach((document) => {
-        console.log(document.data());
         posts.push(document.data())
       });
     res.send(posts)
@@ -43,7 +40,6 @@ app.get("/profil", (req, res) => {
     console.log(`Error getting documents: ${error}`);
   });
 })
-
 
 
 // End point - get users
