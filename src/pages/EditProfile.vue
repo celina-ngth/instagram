@@ -23,9 +23,7 @@
                            <q-item>
                               <q-item-section avatar>
                                  <q-avatar>
-                                    <img
-                                       :src="profil.avatar"
-                                    />
+                                    <img :src="profil.avatar" />
                                  </q-avatar>
                               </q-item-section>
 
@@ -37,7 +35,17 @@
                                     >{{ profil.username }}
                                  </q-item-label>
                                  <q-item-label>
-                                    Modifier mon avatar
+                                    <q-file
+                                       outlined
+                                       dense
+                                       label="Modifier l'avatar"
+                                       v-model="imageUpload"
+                                       accept="image/*"
+                                    >
+                                       <template v-slot:prepend>
+                                          <q-icon name="eva-attach-outline" />
+                                       </template>
+                                    </q-file>
                                  </q-item-label>
                               </q-item-section>
                            </q-item>
@@ -155,6 +163,7 @@ export default {
       return {
          tab: "mails",
          splitterModel: 25,
+         imageUpload: [],
       };
    },
    methods: {
@@ -172,12 +181,12 @@ export default {
                mail: this.profil.mail,
             })
             .then(() => {
-            this.$router.push("/profil"),
-            this.$q.notify({
-               message: "Votre profil a été mis à jour",
-               actions: [{ icon: "eva-close-outline", color: "white" }],
+               this.$router.push("/profil"),
+                  this.$q.notify({
+                     message: "Votre profil a été mis à jour",
+                     actions: [{ icon: "eva-close-outline", color: "white" }],
+                  });
             });
-         });
       },
    },
 };

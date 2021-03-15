@@ -106,15 +106,24 @@
 
 <script>
 import { date } from "quasar";
-import { currentUser } from "../mixins/currentUser.js";
+import firebase from "firebase";
+//import { currentUser } from "../mixins/currentUser.js";
 
 export default {
    name: "Post",
-   mixins: [currentUser],
+  // mixins: [currentUser],
    props: ["post"],
    data() {
       return {
          datas: {},
+         profil: {
+            avatar: "",
+            name: "",
+            username: "",
+            bio: "",
+            author: "",
+            mail: ""
+         },
       };
    },
    methods: {
@@ -141,6 +150,28 @@ export default {
                this.deletePost();
             });
       },
+      currentUser() {
+         firebase
+            .firestore()
+            .collection("users")
+            .doc(this.datas.author)
+            .get()
+            .then((user) => {
+               if (user.exists) {
+                  this.profil.avatar = user.data().avatar;
+                  this.profil.name = user.data().name;
+                  this.profil.username = user.data().username;
+                  this.profil.bio = user.data().bio;
+                  this.profil.author = user.data().author;
+                  this.profil.mail = user.data().mail;
+               } else {
+                  console.log("L'utilisateur n'existe pas");
+               }
+            })
+            .catch((error) => {
+               console.log("Erreur de récupération du document : ", error);
+            });
+      },
    },
    filters: {
       niceDate(value) {
@@ -158,6 +189,9 @@ export default {
          this.datas = this.post;
       }
    },
+   mounted() {
+      this.currentUser();
+   }
 };
 </script>
 

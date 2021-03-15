@@ -70,7 +70,7 @@ export default {
    data() {
       return {
          posts: [],
-          profil: {
+         profil: {
             avatar: "",
             name: "",
             username: "",
